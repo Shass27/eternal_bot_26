@@ -1,0 +1,27 @@
+# colcon / ROS build
+build/
+install/
+log/
+*.egg-info/
+__pycache__/
+*.pyc
+
+# local env / logs
+.pixi/
+MUJOCO_LOG.TXT
+
+# editors
+*.swp
+*~
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+._*
+
+# Ubuntu / Linux
+.directory
+.Trash-*
+.nfs*
+.fuse_hidden*

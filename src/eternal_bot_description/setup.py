@@ -26,6 +26,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'twist_to_stamped = eternal_bot_description.twist_to_stamped:main',
         ],
     },
 )

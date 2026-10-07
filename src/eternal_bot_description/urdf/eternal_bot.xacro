@@ -38,10 +38,10 @@
     </geometry>
     <material name="silver"/>
   </visual>
-  <collision>
-    <origin xyz="-0.22 -0.14 -0.0256" rpy="0 0 0"/>
+  <collision> <!-- cylinder, not STL: mesh contacts ignore surface friction in gz -->
+    <origin xyz="0 0.025 0" rpy="1.5708 0 0"/>
     <geometry>
-      <mesh filename="file://$(find eternal_bot_description)/meshes/front_left_1.stl" scale="0.001 0.001 0.001"/>
+      <cylinder radius="0.05" length="0.05"/>
     </geometry>
   </collision>
 </link>
@@ -59,10 +59,10 @@
     </geometry>
     <material name="silver"/>
   </visual>
-  <collision>
-    <origin xyz="-0.22 0.14 -0.0256" rpy="0 0 0"/>
+  <collision> <!-- cylinder, not STL: mesh contacts ignore surface friction in gz -->
+    <origin xyz="0 -0.025 0" rpy="1.5708 0 0"/>
     <geometry>
-      <mesh filename="file://$(find eternal_bot_description)/meshes/front_right_1.stl" scale="0.001 0.001 0.001"/>
+      <cylinder radius="0.05" length="0.05"/>
     </geometry>
   </collision>
 </link>
@@ -80,10 +80,10 @@
     </geometry>
     <material name="silver"/>
   </visual>
-  <collision>
-    <origin xyz="0.22 0.14 -0.0256" rpy="0 0 0"/>
+  <collision> <!-- cylinder, not STL: mesh contacts ignore surface friction in gz -->
+    <origin xyz="0 -0.025 0" rpy="1.5708 0 0"/>
     <geometry>
-      <mesh filename="file://$(find eternal_bot_description)/meshes/rear_right_1.stl" scale="0.001 0.001 0.001"/>
+      <cylinder radius="0.05" length="0.05"/>
     </geometry>
   </collision>
 </link>
@@ -101,10 +101,10 @@
     </geometry>
     <material name="silver"/>
   </visual>
-  <collision>
-    <origin xyz="0.22 -0.14 -0.0256" rpy="0 0 0"/>
+  <collision> <!-- cylinder, not STL: mesh contacts ignore surface friction in gz -->
+    <origin xyz="0 0.025 0" rpy="1.5708 0 0"/>
     <geometry>
-      <mesh filename="file://$(find eternal_bot_description)/meshes/rear_left_1.stl" scale="0.001 0.001 0.001"/>
+      <cylinder radius="0.05" length="0.05"/>
     </geometry>
   </collision>
 </link>

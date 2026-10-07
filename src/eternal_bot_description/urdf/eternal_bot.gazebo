@@ -3,6 +3,16 @@
 
 <xacro:property name="body_color" value="Gazebo/Silver" />
 
+<!-- skid-steer: fdir1 = wheel axis so mu1 = lateral, mu2 = rolling; lateral must be < 0.75 x rolling (track/wheelbase) or the body can't yaw -->
+<xacro:macro name="wheel_gazebo" params="link">
+  <gazebo reference="${link}">
+    <material>${body_color}</material>
+    <mu1>0.3</mu1>
+    <mu2>1.0</mu2>
+    <fdir1>0 0 1</fdir1>
+  </gazebo>
+</xacro:macro>
+
 <gazebo>
   <plugin filename="gz_ros2_control-system"
           name="gz_ros2_control::GazeboSimROS2ControlPlugin">
@@ -14,43 +24,18 @@
   <material>${body_color}</material>
   <mu1>0.2</mu1>
   <mu2>0.2</mu2>
-  <self_collide>true</self_collide>
   <gravity>true</gravity>
 </gazebo>
 
-<gazebo reference="front_left_1">
-  <material>${body_color}</material>
-  <mu1>0.2</mu1>
-  <mu2>0.2</mu2>
-  <self_collide>true</self_collide>
-</gazebo>
-
-<gazebo reference="front_right_1">
-  <material>${body_color}</material>
-  <mu1>0.2</mu1>
-  <mu2>0.2</mu2>
-  <self_collide>true</self_collide>
-</gazebo>
-
-<gazebo reference="rear_right_1">
-  <material>${body_color}</material>
-  <mu1>0.2</mu1>
-  <mu2>0.2</mu2>
-  <self_collide>true</self_collide>
-</gazebo>
-
-<gazebo reference="rear_left_1">
-  <material>${body_color}</material>
-  <mu1>0.2</mu1>
-  <mu2>0.2</mu2>
-  <self_collide>true</self_collide>
-</gazebo>
+<xacro:wheel_gazebo link="front_left_1"/>
+<xacro:wheel_gazebo link="front_right_1"/>
+<xacro:wheel_gazebo link="rear_right_1"/>
+<xacro:wheel_gazebo link="rear_left_1"/>
 
 <gazebo reference="lidar_1">
   <material>${body_color}</material>
   <mu1>0.2</mu1>
   <mu2>0.2</mu2>
-  <self_collide>true</self_collide>
 </gazebo>
 
 </robot>

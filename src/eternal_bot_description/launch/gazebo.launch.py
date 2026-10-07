@@ -26,7 +26,7 @@ def generate_launch_description():
         executable='robot_state_publisher',
         name='robot_state_publisher',
         output='screen',
-        parameters=[robot_description],
+        parameters=[robot_description, {'use_sim_time': True}],
     )
 
    
@@ -84,6 +84,14 @@ def generate_launch_description():
         output='screen'
     )
 
+    # relays /cmd_vel (Twist, e.g. teleop_twist_keyboard) to the DDC's TwistStamped input
+    twist_to_stamped = Node(
+        package='eternal_bot_description',
+        executable='twist_to_stamped',
+        parameters=[{'use_sim_time': True}],
+        output='screen'
+    )
+
     return LaunchDescription([
         gazebo,
         spawn_robot,
@@ -91,4 +99,5 @@ def generate_launch_description():
         spawn_ddc_after_jsb,
         ros_gz_bridge,
         robot_state_publisher,
+        twist_to_stamped,
     ])

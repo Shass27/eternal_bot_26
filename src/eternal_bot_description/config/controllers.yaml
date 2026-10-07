@@ -1,0 +1,16 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 50
+    use_sim_time: true
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+    diff_drive_controller:
+      type: diff_drive_controller/DiffDriveController
+
+diff_drive_controller:
+  ros__parameters:
+    left_wheel_names:  ["front_left_joint", "rear_left_joint"]
+    right_wheel_names: ["front_right_joint", "rear_right_joint"]
+    wheel_separation: 0.28        # y distance between left and right (0.14 × 2)
+    wheel_radius: 0.05            # measured from wheel STL: 100 mm diameter
+    use_stamped_vel: false

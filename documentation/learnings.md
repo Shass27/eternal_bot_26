@@ -120,3 +120,10 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard          # plain Twist on /
 # or directly (publish continuously, not --once):
 ros2 topic pub -r 10 /diff_drive_controller/cmd_vel geometry_msgs/msg/TwistStamped "{twist: {angular: {z: 1.0}}}"
 ```
+
+## Switch to holonomic (mecanum) simulation
+- Replaced `gz_ros2_control` + `diff_drive_controller` with the Gazebo `gz-sim-mecanum-drive-system` plugin: wheels stay plain cylinders, the plugin maps body Twist (x, y, yaw) to wheel velocities.
+- Plugin consumes `Twist` directly, so the TwistStamped relay and ros2_control config were removed; cmd_vel, odom, tf and joint_states go through `ros_gz_bridge`.
+- The plugin only sets wheel joint velocities, so plain wheels skid instead of strafing. Rollers are emulated like gz's `mecanum_drive.sdf`: sphere wheel collisions, mu=1 along +-45deg `fdir1`, mu2=0 across (FL/RR `1 -1 0`, FR/RL `1 1 0`).
+- `fdir1` rotates with the wheel link by default, so it needs `gz:expressed_in="base_link"`. URDF can't express that (the converter drops it), so `gazebo.launch.py` converts URDF->SDF, tags `fdir1`, and spawns with `-string`.
+- Verified on ground truth (`/world/empty/dynamic_pose/info`): 0.3 m/s forward, strafe-left and spin all move as commanded with no drift.

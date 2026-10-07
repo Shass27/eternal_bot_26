@@ -1,8 +1,11 @@
 import os
+import re
+import shutil
+import subprocess
+import tempfile
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, TimerAction, RegisterEventHandler
-from launch.event_handlers import OnProcessExit
+from launch.actions import IncludeLaunchDescription, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 import xacro
@@ -36,11 +39,19 @@ def generate_launch_description():
         launch_arguments={"gz_args": "-r -v 4 --render-engine ogre empty.sdf"}.items()
     )
 
+    # URDF cannot express fdir1's frame; convert to SDF and pin it to base_link so roller-friction directions don't rotate with the wheels
+    with tempfile.NamedTemporaryFile('w', suffix='.urdf') as f:
+        f.write(robot_description['robot_description']); f.flush()
+        gz = shutil.which('gz') or '/opt/ros/jazzy/opt/gz_tools_vendor/bin/gz'
+        sdf = subprocess.run([gz, 'sdf', '-p', f.name], capture_output=True, text=True, check=True).stdout
+    sdf = sdf.replace('<sdf version', '<sdf xmlns:gz="http://gazebosim.org/schema" version', 1)
+    sdf = re.sub(r'<fdir1>', '<fdir1 gz:expressed_in="base_link">', sdf)
+
     spawn_robot_node = Node(
         package='ros_gz_sim',
         executable='create',
         arguments=[
-            "-topic", "/robot_description",
+            "-string", sdf,
             "-name", "eternal_bot",
             "-allow_renaming", "false",  # prevents "_1" duplicate
             "-x", "0.0",
@@ -52,31 +63,6 @@ def generate_launch_description():
     )
     spawn_robot = TimerAction(period=5.0, actions=[spawn_robot_node])
 
-    # spawn controllers only after the robot spawn process has finished, plus a short delay
-    def spawner(name):
-        return Node(
-            package='controller_manager',
-            executable='spawner',
-            arguments=[name, '--controller-manager', '/controller_manager'],
-            output='screen',
-        )
-
-    joint_state_broadcaster = spawner('joint_state_broadcaster')
-    diff_drive_controller = spawner('diff_drive_controller')
-
-    spawn_jsb_after_robot = RegisterEventHandler(
-        OnProcessExit(
-            target_action=spawn_robot_node,
-            on_exit=[TimerAction(period=3.0, actions=[joint_state_broadcaster])],
-        )
-    )
-    spawn_ddc_after_jsb = RegisterEventHandler(
-        OnProcessExit(
-            target_action=joint_state_broadcaster,
-            on_exit=[diff_drive_controller],
-        )
-    )
-
     ros_gz_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
@@ -84,20 +70,9 @@ def generate_launch_description():
         output='screen'
     )
 
-    # relays /cmd_vel (Twist, e.g. teleop_twist_keyboard) to the DDC's TwistStamped input
-    twist_to_stamped = Node(
-        package='eternal_bot_description',
-        executable='twist_to_stamped',
-        parameters=[{'use_sim_time': True}],
-        output='screen'
-    )
-
     return LaunchDescription([
         gazebo,
         spawn_robot,
-        spawn_jsb_after_robot,
-        spawn_ddc_after_jsb,
         ros_gz_bridge,
         robot_state_publisher,
-        twist_to_stamped,
     ])

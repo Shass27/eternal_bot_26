@@ -2,7 +2,6 @@
 <robot name="eternal_bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 <xacro:include filename="$(find eternal_bot_description)/urdf/materials.xacro" />
-<xacro:include filename="$(find eternal_bot_description)/urdf/eternal_bot.ros2control" />
 <xacro:include filename="$(find eternal_bot_description)/urdf/eternal_bot.gazebo" />
 <link name="base_link">
   <inertial>
@@ -38,10 +37,10 @@
     </geometry>
     <material name="silver"/>
   </visual>
-  <collision> <!-- cylinder, not STL: mesh contacts ignore surface friction in gz -->
-    <origin xyz="0 0.025 0" rpy="1.5708 0 0"/>
+  <collision> <!-- sphere, not STL: mesh contacts ignore surface friction in gz; sphere + unrotated frame keeps fdir1 in link axes -->
+    <origin xyz="0 0.025 0" rpy="0 0 0"/>
     <geometry>
-      <cylinder radius="0.05" length="0.05"/>
+      <sphere radius="0.05"/>
     </geometry>
   </collision>
 </link>
@@ -59,10 +58,10 @@
     </geometry>
     <material name="silver"/>
   </visual>
-  <collision> <!-- cylinder, not STL: mesh contacts ignore surface friction in gz -->
-    <origin xyz="0 -0.025 0" rpy="1.5708 0 0"/>
+  <collision> <!-- sphere, not STL: mesh contacts ignore surface friction in gz; sphere + unrotated frame keeps fdir1 in link axes -->
+    <origin xyz="0 -0.025 0" rpy="0 0 0"/>
     <geometry>
-      <cylinder radius="0.05" length="0.05"/>
+      <sphere radius="0.05"/>
     </geometry>
   </collision>
 </link>
@@ -80,10 +79,10 @@
     </geometry>
     <material name="silver"/>
   </visual>
-  <collision> <!-- cylinder, not STL: mesh contacts ignore surface friction in gz -->
-    <origin xyz="0 -0.025 0" rpy="1.5708 0 0"/>
+  <collision> <!-- sphere, not STL: mesh contacts ignore surface friction in gz; sphere + unrotated frame keeps fdir1 in link axes -->
+    <origin xyz="0 -0.025 0" rpy="0 0 0"/>
     <geometry>
-      <cylinder radius="0.05" length="0.05"/>
+      <sphere radius="0.05"/>
     </geometry>
   </collision>
 </link>
@@ -101,10 +100,10 @@
     </geometry>
     <material name="silver"/>
   </visual>
-  <collision> <!-- cylinder, not STL: mesh contacts ignore surface friction in gz -->
-    <origin xyz="0 0.025 0" rpy="1.5708 0 0"/>
+  <collision> <!-- sphere, not STL: mesh contacts ignore surface friction in gz; sphere + unrotated frame keeps fdir1 in link axes -->
+    <origin xyz="0 0.025 0" rpy="0 0 0"/>
     <geometry>
-      <cylinder radius="0.05" length="0.05"/>
+      <sphere radius="0.05"/>
     </geometry>
   </collision>
 </link>

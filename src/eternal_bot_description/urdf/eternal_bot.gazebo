@@ -3,20 +3,37 @@
 
 <xacro:property name="body_color" value="Gazebo/Silver" />
 
-<!-- skid-steer: fdir1 = wheel axis so mu1 = lateral, mu2 = rolling; lateral must be < 0.75 x rolling (track/wheelbase) or the body can't yaw -->
-<xacro:macro name="wheel_gazebo" params="link">
+<!-- roller emulation (as in gz mecanum_drive.sdf): grip only along fdir1 (+-45deg), free-slip across it; launch file tags fdir1 with gz:expressed_in=base_link (URDF cannot), else it spins with the wheel -->
+<xacro:macro name="wheel_gazebo" params="link fdir">
   <gazebo reference="${link}">
     <material>${body_color}</material>
-    <mu1>0.3</mu1>
-    <mu2>1.0</mu2>
-    <fdir1>0 0 1</fdir1>
+    <mu1>1.0</mu1>
+    <mu2>0.0</mu2>
+    <fdir1>${fdir}</fdir1>
   </gazebo>
 </xacro:macro>
 
 <gazebo>
-  <plugin filename="gz_ros2_control-system"
-          name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-    <parameters>$(find eternal_bot_description)/config/controllers.yaml</parameters>
+  <!-- holonomic drive without modelling rollers: plugin maps body twist to the 4 wheel velocities -->
+  <plugin filename="gz-sim-mecanum-drive-system"
+          name="gz::sim::systems::MecanumDrive">
+    <front_left_joint>front_left_joint</front_left_joint>
+    <front_right_joint>front_right_joint</front_right_joint>
+    <back_left_joint>rear_left_joint</back_left_joint>
+    <back_right_joint>rear_right_joint</back_right_joint>
+    <wheel_separation>0.33</wheel_separation>
+    <wheelbase>0.44</wheelbase>
+    <wheel_radius>0.05</wheel_radius>
+    <topic>cmd_vel</topic>
+    <odom_topic>odom</odom_topic>
+    <tf_topic>tf</tf_topic>
+    <frame_id>odom</frame_id>
+    <child_frame_id>base_link</child_frame_id>
+    <odom_publisher_frequency>50</odom_publisher_frequency>
+  </plugin>
+  <plugin filename="gz-sim-joint-state-publisher-system"
+          name="gz::sim::systems::JointStatePublisher">
+    <topic>joint_states</topic>
   </plugin>
 </gazebo>
 
@@ -27,10 +44,10 @@
   <gravity>true</gravity>
 </gazebo>
 
-<xacro:wheel_gazebo link="front_left_1"/>
-<xacro:wheel_gazebo link="front_right_1"/>
-<xacro:wheel_gazebo link="rear_right_1"/>
-<xacro:wheel_gazebo link="rear_left_1"/>
+<xacro:wheel_gazebo link="front_left_1" fdir="1 -1 0"/>
+<xacro:wheel_gazebo link="front_right_1" fdir="1 1 0"/>
+<xacro:wheel_gazebo link="rear_right_1" fdir="1 -1 0"/>
+<xacro:wheel_gazebo link="rear_left_1" fdir="1 1 0"/>
 
 <gazebo reference="lidar_1">
   <material>${body_color}</material>

@@ -14,7 +14,7 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard     # plain Twist on /cmd_v
 ros2 topic pub -r 10 /cmd_vel geometry_msgs/msg/Twist "{linear: {y: 0.3}}"
 ```
 
-Use the `/sim-drive-test` skill to verify motion against sim-time ground truth.
+Verify motion against sim-time ground truth (`/world/empty/dynamic_pose/info`), not wall-clock speed.
 
 ## Workflow suggestions (Fusion 360 → URDF → Gazebo)
 

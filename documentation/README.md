@@ -11,5 +11,6 @@ Debugging history and design notes for the eternal_bot Gazebo simulation. **Read
 | 5 | [Skid-steer results](05-skid-steer-results.md) | historical | Final sim-time measurements |
 | 6 | [Mecanum (holonomic) switch](06-mecanum-holonomic-switch.md) | current | Gazebo MecanumDrive plugin and friction-emulated rollers |
 | 7 | [Driving and workflow tips](07-driving-and-workflow-tips.md) | current | How to drive the bot, and lessons for CAD → sim |
+| 8 | [2D lidar](08-lidar.md) | current | gpu_lidar on lidar_1, /scan bridge, mount height and the hand edits to the URDF |
 
 Chapters 2, 3 and 5 describe the earlier skid-steer / `diff_drive_controller` setup. It was superseded by the mecanum setup in chapter 6, but the physics lessons (collision geometry, anisotropic friction, sim time) still apply.

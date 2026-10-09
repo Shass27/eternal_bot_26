@@ -22,7 +22,7 @@ ros2 launch eternal_bot_description gazebo.launch.py                # sim
 ros2 launch eternal_bot_description display.launch.py               # rviz only
 ros2 run teleop_twist_keyboard teleop_twist_keyboard                # drive; hold Shift to strafe
 ```
-To verify motion after any URDF, friction, plugin or launch change, use the **`/sim-drive-test`** skill.
+To verify motion after any URDF, friction, plugin or launch change, command `/cmd_vel` and compare against sim-time ground truth (see `.claude/rules/sim-launch.md`, "Debugging motion").
 
 ## How driving works
 1. `/cmd_vel` (`geometry_msgs/Twist`) goes through `ros_gz_bridge` to the gz **MecanumDrive** plugin, which sets the 4 wheel joint velocities.
@@ -50,7 +50,6 @@ These load only when relevant:
 - `.claude/rules/sim-launch.md`: launch pipeline, bridge, sim time, debugging
 - `.claude/rules/sensors-nav.md`: lidar, Nav2/SLAM (roadmap)
 - `.claude/rules/ros2-control.md`: real-hardware controllers (roadmap)
-- `.claude/skills/sim-drive-test/`: sim-time motion test procedure
 
 ## Roadmap
 lidar/sensors in sim → Nav2 / SLAM → real hardware (ros2_control).

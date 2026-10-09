@@ -110,19 +110,19 @@
 
 <link name="lidar_1">
   <inertial>
-    <origin xyz="-5.790023100122029e-18 5.790023100122029e-18 0.025" rpy="0 0 0"/>
+    <origin xyz="-5.790023100122029e-18 5.790023100122029e-18 -0.03" rpy="0 0 0"/>
     <mass value="0.15"/>
     <inertia ixx="0.000125" iyy="0.000125" izz="0.0001875" ixy="-0.0" iyz="-0.0" ixz="-0.0"/>
   </inertial>
   <visual>
-    <origin xyz="-0.0 -0.0 -0.0512" rpy="0 0 0"/>
+    <origin xyz="-0.0 -0.0 -0.1062" rpy="0 0 0"/>
     <geometry>
       <mesh filename="file://$(find eternal_bot_description)/meshes/lidar_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
     <material name="silver"/>
   </visual>
   <collision>
-    <origin xyz="-0.0 -0.0 -0.0512" rpy="0 0 0"/>
+    <origin xyz="-0.0 -0.0 -0.1062" rpy="0 0 0"/>
     <geometry>
       <mesh filename="file://$(find eternal_bot_description)/meshes/lidar_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
@@ -158,7 +158,7 @@
 </joint>
 
 <joint name="lidar_joint" type="fixed">
-  <origin xyz="0.0 0.0 0.0512" rpy="0 0 0"/>
+  <origin xyz="0.0 0.0 0.1062" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="lidar_1"/>
 </joint>

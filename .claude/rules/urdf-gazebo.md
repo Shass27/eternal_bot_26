@@ -16,7 +16,7 @@ paths:
 - Each wheel uses `mu1=1.0`, `mu2=0.0` and a ±45° `fdir1`: grip along the roller axis, free slip across it.
   - FL and RR: `1 -1 0`
   - FR and RL: `1 1 0`
-- Swapping the patterns inverts or mixes up strafing. After touching them, run `/sim-drive-test`.
+- Swapping the patterns inverts or mixes up strafing. After touching them, re-check forward, strafe and spin speeds in sim time.
 - `fdir1` is expressed in the collision frame and spins with the wheel. URDF can't change that, and the converter drops `gz:expressed_in`.
   - So `gazebo.launch.py` adds `gz:expressed_in="base_link"` to **every** `<fdir1>` after `gz sdf -p`.
   - Any new `<fdir1>`, e.g. on a caster, gets pinned to `base_link` as well.
@@ -32,7 +32,7 @@ Check the friction blocks survived conversion:
 ```bash
 xacro src/eternal_bot_description/urdf/eternal_bot.xacro > /tmp/eb.urdf && gz sdf -p /tmp/eb.urdf | grep -A8 "<friction>"
 ```
-Then confirm behaviour with `/sim-drive-test`.
+Then confirm behaviour by driving forward, strafe and spin and measuring in sim time.
 
 ## If you go back to skid-steer / diff-drive
 - With a wheelbase (0.44) longer than the track (0.33) and equal friction both ways, the body cannot yaw.

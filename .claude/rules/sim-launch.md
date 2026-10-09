@@ -30,7 +30,13 @@ Current pairs:
 - Get ground truth in **sim time**: `gz topic -e -t /world/empty/dynamic_pose/info -n 1` gives the stamp and the `eternal_bot` pose.
 - Check RTF with `gz topic -e -t /stats -n 1 | grep real_time_factor`. Wall-clock speed measurements are misleading when RTF < 1.
 - `gz model -m eternal_bot -p` / `-l <link>` / `-j <joint>` inspect the live model.
-- To isolate friction, apply a wrench with ApplyLinkWrench. See the torque-test steps in `.claude/skills/sim-drive-test/SKILL.md`.
+- To isolate friction (torque test): launch a copy of `empty.sdf` with `<plugin filename="gz-sim-apply-link-wrench-system" name="gz::sim::systems::ApplyLinkWrench"/>` added, then:
+  ```bash
+  gz topic -t /world/empty/wrench/persistent -m gz.msgs.EntityWrench -p 'entity: {name: "eternal_bot::base_link", type: LINK}, wrench: {torque: {z: 5}}'
+  sleep 2; gz model -m eternal_bot -p | tail -1
+  gz topic -t /world/empty/wrench/clear -m gz.msgs.Entity -p 'name: "eternal_bot::base_link", type: LINK'
+  ```
+  The expected breakaway torque is roughly μ·m·g·0.28 m. Far more resistance means link μ is being ignored (usually mesh collisions).
 - Publish commands continuously (`-r 10`+), not `--once`.
 
 ## Process cleanup

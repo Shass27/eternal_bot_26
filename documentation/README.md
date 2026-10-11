@@ -14,3 +14,10 @@ Debugging history and design notes for the eternal_bot Gazebo simulation. **Read
 | 8 | [2D lidar](08-lidar.md) | current | gpu_lidar on lidar_1, /scan bridge, mount height and the hand edits to the URDF |
 
 Chapters 2, 3 and 5 describe the earlier skid-steer / `diff_drive_controller` setup. It was superseded by the mecanum setup in chapter 6, but the physics lessons (collision geometry, anisotropic friction, sim time) still apply.
+
+## Arena worlds and `gazebo_min`
+- `worlds/arena.world` and `worlds/arena_obs.world` (arena + 4 cylinders) load `worlds/meshes/arena.dae` through a relative URI, so they resolve next to the installed world file. `setup.py` installs `worlds/*.world` and `worlds/meshes/*`.
+- Both worlds were edited from the originals: the `ogre2` Sensors plugin is removed (the robot model loads Sensors with `ogre`), and `arena_obs`'s absolute `file:///home/team89/...` mesh path is now relative.
+- `gazebo.launch.py` takes `world:=arena` (default), `arena_obs` or `empty`; `--render-engine ogre` is kept in every case.
+- `gazebo_min.launch.py` is the original pipeline with `empty.sdf` only.
+- The arena worlds are named `default`, so ground truth is on `/world/default/dynamic_pose/info` (not `/world/empty/...`). Bridge topics are world-independent.

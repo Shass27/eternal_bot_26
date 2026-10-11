@@ -5,8 +5,9 @@ import subprocess
 import tempfile
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, TimerAction
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
 import xacro
 from os.path import join
@@ -33,10 +34,20 @@ def generate_launch_description():
     )
 
    
+    # world:=arena (default) | arena_obs | empty ; worlds live in share/<pkg>/worlds
+    world_arg = DeclareLaunchArgument(
+        'world', default_value='arena',
+        description='World to load: arena, arena_obs or empty (Gazebo empty.sdf)')
+    world = LaunchConfiguration('world')
+    worlds_dir = join(pkg_ros_gz_rbot, 'worlds')
+    world_file = PythonExpression([
+        "'empty.sdf' if '", world, "' == 'empty' else '", worlds_dir, "/' + '", world, "' + '.world'"
+    ])
+
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(join(pkg_ros_gz_sim, "launch", "gz_sim.launch.py")),
-        # launch_arguments={"gz_args": "-r -v 4 empty.sdf"}.items() use it in native installation of ubuntu
-        launch_arguments={"gz_args": "-r -v 4 --render-engine ogre empty.sdf"}.items()
+        # native ubuntu can drop --render-engine ogre
+        launch_arguments={"gz_args": ["-r -v 4 --render-engine ogre ", world_file]}.items()
     )
 
     # URDF cannot express fdir1's frame; convert to SDF and pin it to base_link so roller-friction directions don't rotate with the wheels
@@ -71,6 +82,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        world_arg,
         gazebo,
         spawn_robot,
         ros_gz_bridge,

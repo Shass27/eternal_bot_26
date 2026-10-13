@@ -24,4 +24,6 @@ paths:
 - odom→base_link already comes from the MecanumDrive plugin. If you add `robot_localization` (EKF), turn off the plugin's TF or the EKF's `publish_tf`, so only one source publishes it.
 - `slam_toolbox` / AMCL provide map→odom. Every node needs `use_sim_time: True`.
 - The robot is holonomic. Use the MPPI controller with `motion_model: "Omni"`, and set `vy` limits in the controller and in `velocity_smoother`. A DWB/DiffDrive setup will never strafe.
-- Nav2 must publish plain `Twist` on `cmd_vel_nav` (remap its `cmd_vel` output; Jazzy Nav2 may default to `TwistStamped`, which twist_mux with `use_stamped: false` ignores). twist_mux forwards to `/cmd_vel`.
+- Nav2 runs via `launch/nav.launch.py` with `config/nav2_params.yaml` (copy of the stock file). Chain: controller → `cmd_vel_nav` → velocity_smoother → `cmd_vel_smoothed` → collision_monitor → `cmd_vel_safe` (plain `Twist`) → twist_mux → `/cmd_vel`. `collision_monitor` must not write `cmd_vel_nav` (smoother input, loop).
+- Params changed from stock for this robot: `base_frame_id: base_link` (no `base_footprint`), `motion_model: Omni`, vy enabled in velocity_smoother and `min_y_velocity_threshold`, `robot_radius: 0.30`, inflation 0.5 (the start-strip gap is ~0.8 m). No map_server/amcl: slam_toolbox localization supplies `/map` and map→odom.
+- Map extent comes from slam_toolbox pose-graph poses, so keep margin around the spawn when mapping or the costmap clips the robot ("Robot is out of bounds of the costmap").

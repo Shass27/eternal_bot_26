@@ -46,7 +46,7 @@ ros2 run nav2_map_server map_saver_cli -f <path>/obs_map --ros-args -p use_sim_t
 ros2 service call /slam_toolbox/serialize_map slam_toolbox/srv/SerializePoseGraph "{filename: '/abs/path/obs_map_serial'}"
 ```
 - The service path must be **absolute and without extension**; slam_toolbox appends `.posegraph` and `.data`.
-- `obs_map.yaml`'s `image:` is relative to the yaml, so keep the pair together. Its `origin: [-2.846, -0.031, 0]` is the pgm's lower-left corner in the `map` frame.
+- `obs_map2.yaml`'s `image:` is relative to the yaml, so keep the pair together. Its `origin: [-2.846, -0.501, 0]` is the pgm's lower-left corner in the `map` frame (the first set, `obs_map`, was cropped at y=-0.031 and clipped the robot at spawn).
 - The `.posegraph` is about 7 MB. Don't `git add .` after saving new maps without checking.
 
 ## Localization on an existing map (reference; not done on this project)
@@ -57,7 +57,7 @@ Best when you only need a pose and want the same stack as mapping.
 1. Copy `localization` settings into the params file (or make a second file, e.g. `config/mapper_params_localization.yaml`):
    ```yaml
    mode: localization
-   map_file_name: /abs/path/obs_map_serial    # pose graph, no extension
+   map_file_name: /abs/path/obs_map2_serial    # pose graph, no extension
    map_start_pose: [0.0, 0.0, 0.0]            # x, y, yaw in the MAP frame where the robot starts
    #map_start_at_dock: true                   # alternative; mutually exclusive with map_start_pose
    ```
@@ -108,5 +108,5 @@ ros2 lifecycle set /amcl configure && ros2 lifecycle set /amcl activate
 | `launch/slam.launch.py` | Includes slam_toolbox `online_async_launch.py` with our params, sim time on |
 | `config/mapper_params_online_async.yaml` | Mapping-mode parameters |
 | `config/gazebo.rviz` | LaserScan, TF and Map displays |
-| `maps/obs_map.{pgm,yaml}` | Occupancy grid of `arena_obs` |
-| `maps/obs_map_serial.{posegraph,data}` | slam_toolbox pose graph of `arena_obs` |
+| `maps/obs_map2.{pgm,yaml}` | Occupancy grid of `arena_obs` |
+| `maps/obs_map2_serial.{posegraph,data}` | slam_toolbox pose graph of `arena_obs` |

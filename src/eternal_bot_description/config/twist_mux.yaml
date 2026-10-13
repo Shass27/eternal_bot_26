@@ -4,7 +4,7 @@ twist_mux:
     use_stamped: false  # plain Twist, matches the gz bridge
     topics:
       navigation:
-        topic: cmd_vel_nav        # Nav2 (must publish Twist)
+        topic: cmd_vel_safe       # Nav2 collision_monitor output (Twist)
         timeout: 0.5
         priority: 10
       teleop:

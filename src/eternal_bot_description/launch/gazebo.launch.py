@@ -81,7 +81,7 @@ def generate_launch_description():
         output='screen'
     )
 
-    # arbitrates cmd_vel_nav / key_vel_filtered (key_teleop) / cmd_vel_emergency (+ e_stop lock) into /cmd_vel
+    # arbitrates cmd_vel_safe (Nav2) / key_vel_filtered (key_teleop) / cmd_vel_emergency (+ e_stop lock) into /cmd_vel
     twist_mux = Node(
         package='twist_mux',
         executable='twist_mux',

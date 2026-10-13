@@ -44,11 +44,11 @@ ros2 run key_teleop key_teleop --ros-args -p twist_stamped_enabled:=false -r key
 ```
 
 ### D. Driving and twist_mux tests
-Priority: `cmd_vel_nav` (10) < `key_vel_filtered` (20, key_teleop) < `cmd_vel_emergency` (255). The `/e_stop` lock blocks nav + teleop.
+Priority: `cmd_vel_safe` (10, Nav2 output) < `key_vel_filtered` (20, key_teleop) < `cmd_vel_emergency` (255). The `/e_stop` lock blocks nav + teleop.
 ```bash
 ros2 topic echo /cmd_vel --field linear.x                              # watch the mux output
 ros2 run key_teleop key_teleop --ros-args -p twist_stamped_enabled:=false   # keyboard; idle zeros are dropped by nonzero_filter
-ros2 topic pub -r 10 /cmd_vel_nav geometry_msgs/msg/Twist '{linear: {x: 0.1}}'          # nav source; key presses override it
+ros2 topic pub -r 10 /cmd_vel_safe geometry_msgs/msg/Twist '{linear: {x: 0.1}}'          # nav source; key presses override it
 ros2 topic pub -r 10 /cmd_vel_emergency geometry_msgs/msg/Twist '{}'                    # zero Twist wins over everything
 ros2 topic pub -r 10 /e_stop std_msgs/msg/Bool '{data: true}'                           # lock engaged; Ctrl+C this first, then release:
 ros2 topic pub --once /e_stop std_msgs/msg/Bool '{data: false}'                         # lock released
@@ -85,7 +85,7 @@ pgrep -fa "[g]z sim"                   # confirm nothing stale before relaunchin
 | `slam.launch.py` | slam_toolbox on `/scan` | sim running |
 | `rviz2 -d .../gazebo.rviz --ros-args -p use_sim_time:=true` | Visualise sim | sim running |
 | `key_teleop ... twist_stamped_enabled:=false` | Keyboard drive via mux | sim running |
-| `topic pub /cmd_vel_nav` | Nav-priority command | sim running |
+| `topic pub /cmd_vel_safe` | Nav-priority command | sim running |
 | `topic pub /cmd_vel_emergency` | Zero Twist at top priority | sim running |
 | `topic pub /e_stop (Bool)` | Lock out nav + teleop | sim running |
 | `display.launch.py [gui:=False]` | RViz + joint GUI, no sim | nothing |

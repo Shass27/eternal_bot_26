@@ -25,6 +25,7 @@ Current pairs:
 
 - Only **one** node may publish odom→base_link. Today that is the MecanumDrive plugin via `/tf`.
 - Every ROS node you add needs `use_sim_time: True`.
+- `/cmd_vel` is the **twist_mux output** (`cmd_vel_out` remapped). Publish test commands to `/key_vel_filtered` (non-zero only); a raw `/cmd_vel` publisher competes with the mux.
 
 ## Debugging motion
 - Get ground truth in **sim time**: `gz topic -e -t /world/empty/dynamic_pose/info -n 1` gives the stamp and the `eternal_bot` pose.

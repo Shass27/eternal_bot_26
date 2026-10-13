@@ -1,0 +1,22 @@
+# twist_mux: highest live priority wins; output cmd_vel_out is remapped to /cmd_vel in gazebo.launch.py
+twist_mux:
+  ros__parameters:
+    use_stamped: false  # plain Twist, matches the gz bridge
+    topics:
+      navigation:
+        topic: cmd_vel_nav        # Nav2 (must publish Twist)
+        timeout: 0.5
+        priority: 10
+      teleop:
+        topic: key_vel_filtered   # key_teleop /key_vel minus zero commands (nonzero_filter node)
+        timeout: 0.5
+        priority: 20
+      emergency:
+        topic: cmd_vel_emergency  # publish zero Twist
+        timeout: 0.5
+        priority: 255
+    locks:
+      e_stop:
+        topic: e_stop             # std_msgs/Bool, true = block everything below priority 255
+        timeout: 0.0              # stays engaged until released
+        priority: 255

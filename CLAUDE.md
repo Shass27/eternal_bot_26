@@ -27,12 +27,14 @@ ros2 launch eternal_bot_description display.launch.py               # rviz only
 ros2 run teleop_twist_keyboard teleop_twist_keyboard                # drive; hold Shift to strafe
 rviz2 -d src/eternal_bot_description/config/gazebo.rviz --ros-args -p use_sim_time:=true
 ros2 launch eternal_bot_description slam.launch.py                  # SLAM, needs the sim running
-ros2 run key_teleop key_teleop --ros-args -p twist_stamped_enabled:=false -r key_vel:=cmd_vel
+ros2 run key_teleop key_teleop --ros-args -p twist_stamped_enabled:=false
+# e-stop: ros2 topic pub -r 10 /e_stop std_msgs/msg/Bool '{data: true}'  (false releases); or zero Twist on /cmd_vel_emergency
 # save map: map_saver_cli -f <path> --ros-args -p use_sim_time:=true; pose graph: /slam_toolbox/serialize_map service (absolute path, no extension)
 ```
 To verify motion after any URDF, friction, plugin or launch change, command `/cmd_vel` and compare against sim-time ground truth (see `.claude/rules/sim-launch.md`, "Debugging motion").
 
 ## How driving works
+0. **twist_mux** (`config/twist_mux.yaml`, started by `gazebo.launch.py`) picks the live input with the highest priority and publishes `/cmd_vel`: `cmd_vel_nav` (10) < `key_vel_filtered` (20, key_teleop with zeros dropped by `nonzero_filter`) < `cmd_vel_emergency` (255). The `/e_stop` Bool lock blocks nav+teleop. Do not publish raw `/cmd_vel` any more.
 1. `/cmd_vel` (`geometry_msgs/Twist`) goes through `ros_gz_bridge` to the gz **MecanumDrive** plugin, which sets the 4 wheel joint velocities.
 2. The rollers are not modelled. They are **emulated by friction**: sphere wheel collisions, μ=1 along a ±45° `fdir1`, μ=0 across it.
 3. `/odom` and `/tf` (odom→base_link) come back from the plugin through the bridge; `/joint_states` comes from JointStatePublisher. There is no ros2_control in sim.
@@ -51,7 +53,7 @@ These are duplicated in the joints, collisions and plugin, so change them togeth
 - **Kill the sim with bracket patterns**, e.g. `pkill -9 -f "[g]z sim"`. A plain `pkill -f "gz sim"` also matches and kills the shell running it.
 - **The robot spawns after a 5 s timer.** Wait for the `eternal_bot` model before commanding it.
 - **RViz needs `--ros-args -p use_sim_time:=true`.** Without `--ros-args -p` the flag is ignored and nothing displays (TF/scan are stamped in sim time). Set Fixed Frame to `map` once SLAM runs.
-- **`key_teleop` publishes `TwistStamped` on `/key_vel`.** The bridge wants `Twist` on `/cmd_vel`, so use `twist_stamped_enabled:=false` and the `key_vel:=cmd_vel` remap.
+- **`key_teleop` publishes `TwistStamped` on `/key_vel`.** The bridge wants `Twist` on `/cmd_vel`, so use `twist_stamped_enabled:=false`; `nonzero_filter` (started by `gazebo.launch.py`) drops its all-zero idle commands and republishes on `key_vel_filtered`, which twist_mux listens to.
 - **Large map files.** `maps/*.posegraph` is about 7 MB. Do not `git add .` blindly when saving new maps.
 - **The URDF comes from the CAD exporter.** Keep hand edits minimal, and record non-obvious ones in `documentation/README.md`.
 

@@ -29,6 +29,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'nonzero_filter = eternal_bot_description.nonzero_filter:main',
         ],
     },
 )

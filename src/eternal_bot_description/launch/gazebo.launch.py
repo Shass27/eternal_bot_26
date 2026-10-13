@@ -81,10 +81,29 @@ def generate_launch_description():
         output='screen'
     )
 
+    # arbitrates cmd_vel_nav / key_vel_filtered (key_teleop) / cmd_vel_emergency (+ e_stop lock) into /cmd_vel
+    twist_mux = Node(
+        package='twist_mux',
+        executable='twist_mux',
+        parameters=[join(pkg_ros_gz_rbot, 'config', 'twist_mux.yaml'), {'use_sim_time': True}],
+        remappings=[('cmd_vel_out', '/cmd_vel')],
+        output='screen'
+    )
+
+    # drops all-zero key_teleop commands so an idle keyboard doesn't override nav
+    key_filter = Node(
+        package='eternal_bot_description',
+        executable='nonzero_filter',
+        parameters=[{'use_sim_time': True}],
+        output='screen'
+    )
+
     return LaunchDescription([
         world_arg,
         gazebo,
         spawn_robot,
         ros_gz_bridge,
+        twist_mux,
+        key_filter,
         robot_state_publisher,
     ])

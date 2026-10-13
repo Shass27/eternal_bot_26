@@ -34,7 +34,7 @@ ros2 run key_teleop key_teleop --ros-args -p twist_stamped_enabled:=false
 To verify motion after any URDF, friction, plugin or launch change, command `/cmd_vel` and compare against sim-time ground truth (see `.claude/rules/sim-launch.md`, "Debugging motion").
 
 ## How driving works
-0. **twist_mux** (`config/twist_mux.yaml`, started by `gazebo.launch.py`) picks the live input with the highest priority and publishes `/cmd_vel`: `cmd_vel_nav` (10) < `key_vel_filtered` (20, key_teleop with zeros dropped by `nonzero_filter`) < `cmd_vel_emergency` (255). The `/e_stop` Bool lock blocks nav+teleop. Do not publish raw `/cmd_vel` any more.
+0. **twist_mux** (`config/twist_mux.yaml`, started by `gazebo.launch.py`) picks the live input with the highest priority and publishes `/cmd_vel`: `cmd_vel_nav` (10) < `key_vel_filtered` (20, key_teleop with zeros dropped by `nonzero_filter`) < `cmd_vel_emergency` (255). The `/e_stop` Bool lock blocks nav+teleop. Publishing raw `/cmd_vel` bypasses it (priorities and e-stop don't apply); that is only intended for a from-scratch SLAM run with the keyboard as sole driver (`-r key_vel:=cmd_vel`).
 1. `/cmd_vel` (`geometry_msgs/Twist`) goes through `ros_gz_bridge` to the gz **MecanumDrive** plugin, which sets the 4 wheel joint velocities.
 2. The rollers are not modelled. They are **emulated by friction**: sphere wheel collisions, μ=1 along a ±45° `fdir1`, μ=0 across it.
 3. `/odom` and `/tf` (odom→base_link) come back from the plugin through the bridge; `/joint_states` comes from JointStatePublisher. There is no ros2_control in sim.

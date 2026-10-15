@@ -25,7 +25,7 @@ setup(
     maintainer='author',
     maintainer_email='todo@todo.com',
     description='The ' + package_name + ' package',
-    license='TODO: License declaration',
+    license='MIT',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [

@@ -18,6 +18,7 @@ help: ## list targets
 
 build: ## colcon build --symlink-install
 	colcon build --symlink-install
+	@echo "Built. For ros2 commands outside make, run: source install/setup.bash"  # make targets source it themselves
 
 sim: ## Gazebo sim + bridge + twist_mux (WORLD=...)
 	$(LAUNCH) gazebo.launch.py world:=$(WORLD)

@@ -66,4 +66,4 @@ These load only when relevant:
 - `.claude/rules/ros2-control.md`: real-hardware controllers (roadmap)
 
 ## Roadmap
-lidar/sensors in sim (done) → SLAM (slam_toolbox, done) → Nav2 → real hardware (ros2_control).
+lidar/sensors in sim (done) → SLAM (slam_toolbox, done) → Nav2 (done, `documentation/10-nav2.md`) → real hardware (ros2_control).

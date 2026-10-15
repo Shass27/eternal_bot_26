@@ -20,7 +20,9 @@ paths:
 - Resuming/localizing: set `mode: localization` and `map_file_name: <path without extension>` in the params file, plus `map_start_at_dock` or `map_start_pose`.
 - RViz: Map display on `/map` is Transient Local. Fixed Frame `map` only works once slam_toolbox is running.
 
-## Nav2 (roadmap)
+## Nav2 (done)
+- Full write-up: `documentation/10-nav2.md`. Run order: `gazebo.launch.py` → `slam.launch.py` (localization) → `nav.launch.py`; send goals from RViz "2D Goal Pose". `nav.launch.py` blocks until `map→odom` exists.
+- `mapper_params_online_async.yaml` `map_file_name` is absolute; fix it for your checkout or localization (and so Nav2) never starts.
 - odom→base_link already comes from the MecanumDrive plugin. If you add `robot_localization` (EKF), turn off the plugin's TF or the EKF's `publish_tf`, so only one source publishes it.
 - `slam_toolbox` / AMCL provide map→odom. Every node needs `use_sim_time: True`.
 - The robot is holonomic. Use the MPPI controller with `motion_model: "Omni"`, and set `vy` limits in the controller and in `velocity_smoother`. A DWB/DiffDrive setup will never strafe.

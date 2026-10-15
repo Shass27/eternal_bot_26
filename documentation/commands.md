@@ -56,6 +56,22 @@ ros2 topic info /cmd_vel -v                                            # only tw
 ros2 run teleop_twist_keyboard teleop_twist_keyboard                   # alternative teleop; needs -r cmd_vel:=key_vel_filtered to go through the mux
 ```
 
+### F. Sim + SLAM (localization) + Nav2
+```bash
+# T1
+ros2 launch eternal_bot_description gazebo.launch.py world:=arena_obs  # wait for the robot to spawn
+# T2
+ros2 launch eternal_bot_description slam.launch.py                     # localization on obs_map2; check map_file_name in the yaml points at your checkout
+# T3
+ros2 launch eternal_bot_description nav.launch.py                      # waits for map->odom, then starts Nav2
+# T4
+rviz2 -d src/eternal_bot_description/config/gazebo.rviz --ros-args -p use_sim_time:=true   # Fixed Frame: map; send goals with "2D Goal Pose"
+```
+```bash
+ros2 lifecycle get /controller_server                                  # active when Nav2 is up
+ros2 topic echo /cmd_vel_safe --field linear                           # Nav2 output, before twist_mux
+```
+
 ### E. Preview without the sim
 ```bash
 ros2 launch eternal_bot_description display.launch.py                  # rviz + joint_state_publisher GUI
@@ -83,6 +99,7 @@ pgrep -fa "[g]z sim"                   # confirm nothing stale before relaunchin
 | `gazebo.launch.py [world:=...]` | Sim + bridge + twist_mux + filter | nothing |
 | `gazebo_min.launch.py` | Robot in empty world only | nothing |
 | `slam.launch.py` | slam_toolbox on `/scan` | sim running |
+| `nav.launch.py` | Nav2 servers (waits for map->odom) | sim + slam running |
 | `rviz2 -d .../gazebo.rviz --ros-args -p use_sim_time:=true` | Visualise sim | sim running |
 | `key_teleop ... twist_stamped_enabled:=false` | Keyboard drive via mux | sim running |
 | `topic pub /cmd_vel_safe` | Nav-priority command | sim running |

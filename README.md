@@ -4,7 +4,7 @@ A 4-wheel **mecanum** robot simulated in Gazebo, driven by keyboard or by Nav2 o
 
 ![ROS 2 Jazzy](https://img.shields.io/badge/ROS_2-Jazzy-22314E) ![Gazebo Harmonic](https://img.shields.io/badge/Gazebo-Harmonic-F58113)
 
-| Gazebo (`arena_obs`) | Nav2 in RViz |
+| Gazebo (`arena_obs`) | Nav2 ready RViz (already SLAMed) |
 |---|---|
 | ![Gazebo](documentation/media/gazebo.png) | ![Nav2](documentation/media/nav2.png) |
 
@@ -51,3 +51,6 @@ make teleop                # optional keyboard drive
 
 ## Documentation
 [`documentation/`](documentation/README.md) is the build log: debugging history, design decisions and chapters on drive, lidar, SLAM and Nav2. Read it before changing physics or the drive.
+
+## License
+[MIT](LICENSE)

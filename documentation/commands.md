@@ -8,6 +8,24 @@ Run everything from the repo root. Every terminal needs `source install/setup.ba
 colcon build --symlink-install && source install/setup.bash   # symlink-install: config/launch edits need no rebuild; new files, setup.py and package.xml edits do
 ```
 
+## Make targets
+
+Shortcuts for the commands below; run each in its own terminal. `make help` lists them.
+
+| Target | Runs |
+|---|---|
+| `make build` | colcon build |
+| `make sim [WORLD=arena\|arena_obs\|empty]` | A: sim |
+| `make sim-min` | A: robot in empty world |
+| `make slam` / `make nav` | C/F: SLAM, Nav2 |
+| `make rviz` | B: RViz with sim time |
+| `make teleop` / `make teleop-raw` | keyboard via mux / straight to `/cmd_vel` |
+| `make estop` / `make estop-release` | D: lock / unlock nav + teleop |
+| `make stop` | D: zero Twist on `cmd_vel_emergency` |
+| `make nav-test` / `make echo-cmd` / `make mux-info` | D: nav-priority test, watch `/cmd_vel`, publisher check |
+| `make display [GUI=False]` / `make view` | E: preview without sim |
+| `make clean` | Cleanup: kill leftover processes |
+
 ## Sequences
 
 ### A. Sim only

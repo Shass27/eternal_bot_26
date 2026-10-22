@@ -10,7 +10,7 @@ paths:
 2. The URDF is written to a temp file and run through `gz sdf -p`. If `gz` isn't on PATH, it falls back to `/opt/ros/jazzy/opt/gz_tools_vendor/bin/gz`.
 3. A regex rewrites `<fdir1>` to `<fdir1 gz:expressed_in="base_link">` and adds the `xmlns:gz` namespace.
 4. `ros_gz_sim create -string <sdf>` runs after a 5 s `TimerAction`.
-5. Gazebo is started with `gz_args: -r -v 4 --render-engine ogre empty.sdf`. Keep `ogre` on the VM.
+5. Gazebo is started with `gz_args: -r -v 4 --render-engine <render_engine> <world>`. `render_engine` is a launch argument (default `ogre2`; pass `ogre` in a VM). The same value is spliced into the SDF's Sensors `<render_engine>` before spawning (step 3 regex style).
 
 ## Bridge (`config/ros_gz_bridge_gazebo.yaml`)
 Current pairs:

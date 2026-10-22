@@ -44,10 +44,15 @@ def generate_launch_description():
         "'empty.sdf' if '", world, "' == 'empty' else '", worlds_dir, "/' + '", world, "' + '.world'"
     ])
 
+    # render_engine:=ogre2 (default) | ogre ; use ogre in a VM. Applies to the gz GUI/server and the lidar Sensors plugin
+    render_engine_arg = DeclareLaunchArgument(
+        'render_engine', default_value='ogre2',
+        description='Gazebo render engine: ogre2 (native GPU) or ogre (VM)')
+    render_engine = LaunchConfiguration('render_engine')
+
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(join(pkg_ros_gz_sim, "launch", "gz_sim.launch.py")),
-        # native ubuntu can drop --render-engine ogre
-        launch_arguments={"gz_args": ["-r -v 4 --render-engine ogre ", world_file]}.items()
+        launch_arguments={"gz_args": ["-r -v 4 --render-engine ", render_engine, " ", world_file]}.items()
     )
 
     # URDF cannot express fdir1's frame; convert to SDF and pin it to base_link so roller-friction directions don't rotate with the wheels
@@ -57,12 +62,15 @@ def generate_launch_description():
         sdf = subprocess.run([gz, 'sdf', '-p', f.name], capture_output=True, text=True, check=True).stdout
     sdf = sdf.replace('<sdf version', '<sdf xmlns:gz="http://gazebosim.org/schema" version', 1)
     sdf = re.sub(r'<fdir1>', '<fdir1 gz:expressed_in="base_link">', sdf)
+    # the Sensors plugin's <render_engine> is baked into the model; splice the launch argument in at spawn time
+    sdf_parts = re.split(r'(?<=<render_engine>)[^<]*(?=</render_engine>)', sdf)
+    sdf_arg = [sdf_parts[0]] + [x for part in sdf_parts[1:] for x in (render_engine, part)]
 
     spawn_robot_node = Node(
         package='ros_gz_sim',
         executable='create',
         arguments=[
-            "-string", sdf,
+            "-string", sdf_arg,
             "-name", "eternal_bot",
             "-allow_renaming", "false",  # prevents "_1" duplicate
             "-x", "0.0",
@@ -100,6 +108,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         world_arg,
+        render_engine_arg,
         gazebo,
         spawn_robot,
         ros_gz_bridge,

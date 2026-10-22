@@ -9,7 +9,7 @@
 
 ## What was done, by phase
 0. **Inspect the conversion.** `gz sdf -p` on the xacro output shows `lidar_1` as `<frame name='lidar_1' attached_to='lidar_joint'>` and its mesh lumped into `base_link`. A sensor placed under `<gazebo reference="lidar_1">` lands on `base_link` at the joint's offset.
-1. **Sensors system.** `gz-sim-sensors-system` with `<render_engine>ogre</render_engine>` was added to the model's `<gazebo>` block in `eternal_bot.gazebo`. `empty.sdf` does not load it, and loading it from the model works, so no custom world is needed. The plugin logs nothing on its own; the proof is `/scan` appearing once a sensor exists.
+1. **Sensors system.** `gz-sim-sensors-system` with `<render_engine>ogre2</render_engine>` (overridden at launch by `render_engine:=`, e.g. `ogre` on a VM) was added to the model's `<gazebo>` block in `eternal_bot.gazebo`. `empty.sdf` does not load it, and loading it from the model works, so no custom world is needed. The plugin logs nothing on its own; the proof is `/scan` appearing once a sensor exists.
 2. **Sensor.** `<sensor name="lidar" type="gpu_lidar">` under `<gazebo reference="lidar_1">`: topic `scan`, `gz_frame_id` `lidar_1`, 10 Hz, 360 samples over ±π, range 0.12 to 12 m.
 3. **Bridge.** `/scan` was added to `config/ros_gz_bridge_gazebo.yaml` as `sensor_msgs/msg/LaserScan` ↔ `gz.msgs.LaserScan`, GZ→ROS.
 4. **Verify.** `gz topic -e -t /scan`, `ros2 topic echo /scan --once` (`frame_id: lidar_1`), `tf2_echo base_link lidar_1`, then RViz with shapes in the world. Driving was re-tested: forward, strafe, spin, diagonal and arc, both directions, all within 5 % of the command and no drift on uncommanded axes.
@@ -31,4 +31,4 @@
 ros2 launch eternal_bot_description gazebo.launch.py        # wait ~10 s for the spawn
 rviz2 -d src/eternal_bot_description/config/gazebo.rviz --ros-args -p use_sim_time:=true
 ```
-`gazebo.rviz` already has the LaserScan (`/scan`) and TF displays, fixed frame `odom`. If no points show, set the LaserScan reliability to Best Effort. The Gazebo GUI's "Visualize Lidar" draws the rays without the bridge, but can be unreliable on the VM's ogre renderer.
+`gazebo.rviz` already has the LaserScan (`/scan`) and TF displays, fixed frame `odom`. If no points show, set the LaserScan reliability to Best Effort. The Gazebo GUI's "Visualize Lidar" draws the rays without the bridge, but can be unreliable on the VM's ogre renderer (`render_engine:=ogre`).

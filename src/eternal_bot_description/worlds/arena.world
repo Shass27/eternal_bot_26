@@ -18,7 +18,7 @@
       name="gz::sim::systems::SceneBroadcaster">
     </plugin>
 
-    <!-- Sensors (lidar) plugin is loaded by the robot model (ogre), so it is not repeated here -->
+    <!-- Sensors (lidar) plugin is loaded by the robot model (engine set by render_engine), so it is not repeated here -->
 
     <!-- Plugin for IMU -->
     <plugin filename="gz-sim-imu-system"

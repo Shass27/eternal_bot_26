@@ -49,6 +49,14 @@ make teleop                # optional keyboard drive
 ```
 `make help` lists every target, including `estop`, `estop-release` and `stop`.
 
+### Render engine
+The sim uses Gazebo's `ogre2` renderer by default. It is a launch argument that can be changed at runtime, and it applies to both the Gazebo GUI/server and the lidar sensor:
+```bash
+make sim RENDER=ogre                                                  # e.g. in a VM without proper GPU support
+ros2 launch eternal_bot_description gazebo.launch.py render_engine:=ogre
+```
+The same `render_engine:=` argument works for `gazebo_min.launch.py`.
+
 ## Documentation
 [`documentation/`](documentation/README.md) is the build log: debugging history, design decisions and chapters on drive, lidar, SLAM and Nav2. Read it before changing physics or the drive.
 

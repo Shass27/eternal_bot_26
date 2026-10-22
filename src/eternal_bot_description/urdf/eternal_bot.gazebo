@@ -31,10 +31,10 @@
     <child_frame_id>base_link</child_frame_id>
     <odom_publisher_frequency>50</odom_publisher_frequency>
   </plugin>
-  <!-- renders sensors (lidar) for sensor entities; empty.sdf doesn't load it, so it's loaded from the model; ogre needed on the VM -->
+  <!-- renders sensors (lidar) for sensor entities; empty.sdf doesn't load it, so it's loaded from the model; engine is overridden by the render_engine launch argument -->
   <plugin filename="gz-sim-sensors-system"
           name="gz::sim::systems::Sensors">
-    <render_engine>ogre</render_engine>
+    <render_engine>ogre2</render_engine>
   </plugin>
   <plugin filename="gz-sim-joint-state-publisher-system"
           name="gz::sim::systems::JointStatePublisher">

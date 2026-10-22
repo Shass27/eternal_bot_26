@@ -9,7 +9,7 @@ paths:
 ## Lidar on `lidar_1`
 - Add a `<sensor type="gpu_lidar">` under `<gazebo reference="lidar_1">`. Give it `<topic>scan</topic>`, `<gz_frame_id>lidar_1</gz_frame_id>`, an update rate, and ray/range settings.
 - `lidar_1` is attached with a fixed joint, so the converter **merges it into `base_link`**. Check the frame in the SDF output, and that `/scan`'s `header.frame_id` matches a TF frame.
-- Done: the sensor and the `gz-sim-sensors-system` plugin (ogre) live in `urdf/eternal_bot.gazebo`, `/scan` is bridged, and `lidar_1` sits at z=0.1062 so the scan clears the wheel tops. See `documentation/08-lidar.md`. Loading the sensors plugin from the model works with `empty.sdf`.
+- Done: the sensor and the `gz-sim-sensors-system` plugin (`render_engine` launch arg, default ogre2) live in `urdf/eternal_bot.gazebo`, `/scan` is bridged, and `lidar_1` sits at z=0.1062 so the scan clears the wheel tops. See `documentation/08-lidar.md`. Loading the sensors plugin from the model works with `empty.sdf`.
 - Bridge `/scan` with `sensor_msgs/msg/LaserScan` ↔ `gz.msgs.LaserScan`, GZ→ROS.
 - Any new sensor must survive the URDF→SDF conversion in `gazebo.launch.py`. Grep the converted SDF to check.
 

@@ -22,6 +22,7 @@ Stack: ROS 2 **Jazzy** + Gazebo **Harmonic** (gz-sim 8, DART physics), running i
 colcon build --symlink-install && source install/setup.bash        # from repo root
 ros2 launch eternal_bot_description gazebo.launch.py                # sim, arena world
 ros2 launch eternal_bot_description gazebo.launch.py world:=arena_obs  # arena + obstacles (or world:=empty)
+ros2 launch eternal_bot_description gazebo.launch.py render_engine:=ogre  # VM; default is ogre2
 ros2 launch eternal_bot_description gazebo_min.launch.py            # robot in empty world only
 ros2 launch eternal_bot_description display.launch.py               # rviz only
 ros2 run teleop_twist_keyboard teleop_twist_keyboard                # drive; hold Shift to strafe
@@ -50,7 +51,7 @@ These are duplicated in the joints, collisions and plugin, so change them togeth
 ## Gotchas
 - **Gazebo does not spawn from `/robot_description`.** `gazebo.launch.py` converts the model to SDF, pins `fdir1` to `base_link`, and spawns that. Test model changes through this launch file.
 - **Measure speeds in sim time** (`/world/empty/dynamic_pose/info`; `/world/default/...` in the arena worlds). Wall-clock numbers are wrong whenever the real-time factor (RTF) is below 1, which is common on the VM.
-- **Keep `--render-engine ogre`** in `gz_args`. It is needed on the VM; native Ubuntu can drop it.
+- **Render engine is a launch argument**: `render_engine:=ogre2` (default, native GPU) or `render_engine:=ogre` (needed in a VM). It feeds both `--render-engine` in `gz_args` and the lidar Sensors plugin's `<render_engine>` (spliced into the SDF at spawn). Don't hardcode it elsewhere. Make: `make sim RENDER=ogre`.
 - **Kill the sim with bracket patterns**, e.g. `pkill -9 -f "[g]z sim"`. A plain `pkill -f "gz sim"` also matches and kills the shell running it.
 - **The robot spawns after a 5 s timer.** Wait for the `eternal_bot` model before commanding it.
 - **RViz needs `--ros-args -p use_sim_time:=true`.** Without `--ros-args -p` the flag is ignored and nothing displays (TF/scan are stamped in sim time). Set Fixed Frame to `map` once SLAM runs.

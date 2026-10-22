@@ -5,6 +5,7 @@ PKG   := eternal_bot_description
 CFG   := src/$(PKG)/config
 WORLD ?= arena
 GUI   ?= True
+RENDER ?= ogre2
 # each recipe line is its own shell, so source the workspace in front of it
 ROS   := source install/setup.bash &&
 LAUNCH := $(ROS) ros2 launch $(PKG)
@@ -14,17 +15,17 @@ LAUNCH := $(ROS) ros2 launch $(PKG)
 
 help: ## list targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-12s %s\n", $$1, $$2}'
-	@echo; echo "vars: WORLD=arena|arena_obs|empty (sim), GUI=True|False (display)"
+	@echo; echo "vars: WORLD=arena|arena_obs|empty (sim), GUI=True|False (display), RENDER=ogre2|ogre (sim, ogre for VMs)"
 
 build: ## colcon build --symlink-install
 	colcon build --symlink-install
 	@echo "Built. For ros2 commands outside make, run: source install/setup.bash"  # make targets source it themselves
 
 sim: ## Gazebo sim + bridge + twist_mux (WORLD=...)
-	$(LAUNCH) gazebo.launch.py world:=$(WORLD)
+	$(LAUNCH) gazebo.launch.py world:=$(WORLD) render_engine:=$(RENDER)
 
 sim-min: ## robot in empty world only, raw /cmd_vel
-	$(LAUNCH) gazebo_min.launch.py
+	$(LAUNCH) gazebo_min.launch.py render_engine:=$(RENDER)
 
 slam: ## slam_toolbox on a running sim
 	$(LAUNCH) slam.launch.py

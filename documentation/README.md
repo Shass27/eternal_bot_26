@@ -19,7 +19,7 @@ Chapters 2, 3 and 5 describe the earlier skid-steer / `diff_drive_controller` se
 
 ## Arena worlds and `gazebo_min`
 - `worlds/arena.world` and `worlds/arena_obs.world` (arena + 4 cylinders) load `worlds/meshes/arena.dae` through a relative URI, so they resolve next to the installed world file. `setup.py` installs `worlds/*.world` and `worlds/meshes/*`.
-- Both worlds were edited from the originals: the `ogre2` Sensors plugin is removed (the robot model loads Sensors with `ogre`), and `arena_obs`'s absolute `file:///home/team89/...` mesh path is now relative.
-- `gazebo.launch.py` takes `world:=arena` (default), `arena_obs` or `empty`; `--render-engine ogre` is kept in every case.
+- Both worlds were edited from the originals: the `ogre2` Sensors plugin is removed (the robot model loads Sensors, with the engine from `render_engine`), and `arena_obs`'s absolute `file:///home/team89/...` mesh path is now relative.
+- `gazebo.launch.py` takes `world:=arena` (default), `arena_obs` or `empty`; `--render-engine` follows the `render_engine` launch argument (`ogre2` default, `ogre` for VMs) in every case.
 - `gazebo_min.launch.py` is the original pipeline with `empty.sdf` only.
 - The arena worlds are named `default`, so ground truth is on `/world/default/dynamic_pose/info` (not `/world/empty/...`). Bridge topics are world-independent.

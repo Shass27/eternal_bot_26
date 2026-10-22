@@ -34,6 +34,7 @@ ros2 launch eternal_bot_description gazebo.launch.py                   # arena w
 ros2 launch eternal_bot_description gazebo.launch.py world:=arena_obs  # arena + 4 cylinders
 ros2 launch eternal_bot_description gazebo.launch.py world:=empty      # Gazebo empty.sdf
 ros2 launch eternal_bot_description gazebo_min.launch.py               # robot in empty world only (no twist_mux, so /cmd_vel is raw)
+ros2 launch eternal_bot_description gazebo.launch.py render_engine:=ogre   # render engine: ogre2 (default) | ogre (VM); also make sim RENDER=ogre
 ```
 
 ### B. Sim + RViz

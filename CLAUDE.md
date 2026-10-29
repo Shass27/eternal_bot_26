@@ -11,7 +11,7 @@ Stack: ROS 2 **Jazzy** + Gazebo **Harmonic** (gz-sim 8, DART physics), running i
 - `meshes/`: Fusion STLs (visuals, plus base/lidar collisions)
 - `config/`: `ros_gz_bridge_gazebo.yaml`, `mapper_params_online_async.yaml` (slam_toolbox), `nav2_params.yaml`, `twist_mux.yaml`, rviz configs
 - `maps/`: saved SLAM output for `arena_obs`: `obs_map2.pgm/.yaml` + `obs_map2_serial.posegraph/.data` (current, 0.5 m margin south of spawn); `obs_map*` is the older tight-cropped set
-- `launch/`: `gazebo.launch.py` (sim, `world:=arena|arena_obs|empty`, default arena), `gazebo_min.launch.py` (robot in empty world only), `display.launch.py` (rviz + joint GUI), `slam.launch.py` (slam_toolbox on a running sim), `nav.launch.py` (Nav2 on sim + slam; waits for map→odom)
+- `launch/`: `gazebo.launch.py` (sim, `world:=arena|arena_obs|empty`, default arena), `gazebo_min.launch.py` (robot in empty world only), `display.launch.py` (rviz + joint GUI), `slam.launch.py` (slam_toolbox on a running sim), `nav.launch.py` (Nav2 on sim + slam; waits for map→odom), `pi.launch.py` (Raspberry Pi: slam_toolbox localization + Nav2 against the laptop's sim; rewrites the map path)
 - `worlds/`: `arena.world`, `arena_obs.world` (arena + 4 cylinders), `meshes/arena.dae`. World name is `default`
 - `view.sh`: quick urdf-viz preview without ROS
 - `cad/eternal_bot_minimal.f3d`: source CAD
@@ -29,6 +29,7 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard                # drive; hol
 rviz2 -d src/eternal_bot_description/config/gazebo.rviz --ros-args -p use_sim_time:=true
 ros2 launch eternal_bot_description slam.launch.py                  # SLAM, needs the sim running
 ros2 launch eternal_bot_description nav.launch.py                   # Nav2 servers; needs sim + slam (localization). Send goals from RViz "2D Goal Pose"
+ros2 launch eternal_bot_description pi.launch.py                    # on the Pi: SLAM localization + Nav2; laptop runs gazebo.launch.py + RViz
 ros2 run key_teleop key_teleop --ros-args -p twist_stamped_enabled:=false
 # e-stop: ros2 topic pub -r 10 /e_stop std_msgs/msg/Bool '{data: true}'  (false releases); or zero Twist on /cmd_vel_emergency
 # save map: map_saver_cli -f <path> --ros-args -p use_sim_time:=true; pose graph: /slam_toolbox/serialize_map service (absolute path, no extension)

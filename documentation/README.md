@@ -14,6 +14,7 @@ Debugging history and design notes for the eternal_bot Gazebo simulation. **Read
 | 8 | [2D lidar](08-lidar.md) | current | gpu_lidar on lidar_1, /scan bridge, mount height and the hand edits to the URDF |
 | 9 | [SLAM and localization](09-slam.md) | current | slam_toolbox mapping, saved maps, and how to localize on an existing map (reference) |
 | 10 | [Nav2](10-nav2.md) | current | Nav2 on slam_toolbox localization, Omni MPPI, the cmd_vel chain through twist_mux, and params changed from stock |
+| 11 | [Raspberry Pi](11-raspberry-pi.md) | current | Ubuntu 24.04 + Jazzy on a Pi 5 over direct ethernet, laptop sims while the Pi runs SLAM + Nav2, and the setup problems hit along the way |
 
 Chapters 2, 3 and 5 describe the earlier skid-steer / `diff_drive_controller` setup. It was superseded by the mecanum setup in chapter 6, but the physics lessons (collision geometry, anisotropic friction, sim time) still apply.
 

@@ -57,6 +57,32 @@ ros2 launch eternal_bot_description gazebo.launch.py render_engine:=ogre
 ```
 The same `render_engine:=` argument works for `gazebo_min.launch.py`.
 
+## Running on a Raspberry Pi
+The laptop runs the simulation and RViz; a Raspberry Pi 5 (Ubuntu Server 24.04, ROS 2 Jazzy ros-base) runs SLAM and Nav2 over an ethernet cable. Both machines need the same `ROS_DOMAIN_ID` (26 in the setup used here). `/clock` comes from the laptop, so the Pi runs on sim time.
+
+| Laptop | Raspberry Pi |
+|---|---|
+| `make sim WORLD=arena_obs` (Gazebo, bridge, twist_mux) | `ros2 launch eternal_bot_description pi.launch.py` (slam_toolbox localization on `maps/obs_map2_serial` + Nav2) |
+| `make rviz`, `make teleop` | — |
+
+Install on the Pi. Not rosdep: `package.xml` would pull in Gazebo and RViz.
+```bash
+sudo apt install ros-jazzy-navigation2 ros-jazzy-nav2-bringup ros-jazzy-slam-toolbox \
+  ros-jazzy-twist-mux ros-jazzy-robot-state-publisher ros-jazzy-xacro
+git clone --depth 1 https://github.com/shass27/eternal_bot_26.git && cd eternal_bot_26
+colcon build --symlink-install --packages-select eternal_bot_description
+```
+Then, each in its own terminal:
+```bash
+make sim WORLD=arena_obs   # laptop; wait for the single eternal_bot model (5 s timer)
+source install/setup.bash && ros2 launch eternal_bot_description pi.launch.py   # Pi; Nav2 starts once map→odom is published
+make rviz                  # laptop; Fixed Frame map, send goals with "2D Goal Pose"
+make teleop                # laptop, optional
+```
+`pi.launch.py` points slam_toolbox at the installed map, so `config/mapper_params_online_async.yaml` needs no per-machine edit.
+
+See [chapter 11](documentation/11-raspberry-pi.md) for flashing, networking (direct-ethernet shared connection) and troubleshooting.
+
 ## Documentation
 [`documentation/`](documentation/README.md) is the build log: debugging history, design decisions and chapters on drive, lidar, SLAM and Nav2. Read it before changing physics or the drive.
 
